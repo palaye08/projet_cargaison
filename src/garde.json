@@ -1,0 +1,52 @@
+[
+    {
+        "number": 6485,
+        "type": "Maritime",
+        "weight": 230,
+        "product": "N\/A",
+        "dateDepart": "2024-06-01",
+        "dateArrivee": "2024-06-09",
+        "distance": 92.31992940454357,
+        "produit": []
+    },
+    {
+        "number": 2943,
+        "type": "A\u00e9rienne",
+        "weight": 34,
+        "product": "N\/A",
+        "dateDepart": "2024-06-01",
+        "dateArrivee": "2024-06-09",
+        "distance": 27.69486753708013,
+        "produit": []
+    },
+    {
+        "number": 7287,
+        "type": "A\u00e9rienne",
+        "weight": "N\/A",
+        "product": 100,
+        "dateDepart": "2024-06-01",
+        "dateArrivee": "2024-06-09",
+        "distance": 11.260019103220246,
+        "produit": []
+    },
+    {
+        "number": 6708,
+        "type": "A\u00e9rienne",
+        "weight": "N\/A",
+        "product": 120,
+        "dateDepart": "2024-06-01",
+        "dateArrivee": "2024-06-09",
+        "distance": 40.47549270791961,
+        "produit": []
+    },
+    {
+        "number": 3901,
+        "type": "A\u00e9rienne",
+        "weight": 123,
+        "product": "N\/A",
+        "dateDepart": "2024-06-01",
+        "dateArrivee": "2024-06-09",
+        "distance": 12.117902667711846,
+        "produit": []
+    }
+]
