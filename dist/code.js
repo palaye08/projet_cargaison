@@ -8,6 +8,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+let cargoData = [];
+function generateRandomCode() {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const digits = '0123456789';
+    let code = '';
+    for (let i = 0; i < 2; i++) {
+        code += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    for (let i = 0; i < 2; i++) {
+        code += digits.charAt(Math.floor(Math.random() * digits.length));
+    }
+    return code;
+}
+let produits = [];
 let cargaison = [];
 document.addEventListener('DOMContentLoaded', function () {
     const cargoForm = document.getElementById('cargaisonForm');
@@ -134,10 +148,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 number: generateUniqueNumber(),
                 type: type,
                 weight: weight !== null ? weight : 'N/A',
-                product: nbreProduits !== null ? nbreProduits : 'N/A',
                 dateDepart: dateDepart,
                 dateArrivee: dateArrivee,
+                products: nbreProduits !== null ? nbreProduits : 'N/A',
                 distance: distance,
+                etat: "ouvert",
+                progres: "En attente",
                 produit: []
             };
             // Fonction pour envoyer les données à savejson.php
@@ -174,9 +190,17 @@ document.addEventListener('DOMContentLoaded', function () {
       <td class="px-4 py-2">${newCargo.weight !== 'N/A' ? newCargo.weight : '---'}</td>
       <td class="px-4 py-2">${newCargo.dateDepart}</td>
       <td class="px-4 py-2">${newCargo.dateArrivee}</td>
-      <td class="px-4 py-2">${newCargo.product !== 'N/A' ? newCargo.product : '---'}</td>
+      <td class="px-4 py-2">${newCargo.products !== 'N/A' ? newCargo.products : '---'}</td>
       <td class="px-4 py-2">${newCargo.distance !== 'N/A' ? newCargo.distance.toFixed(2) : '---'} km</td>
- 
+      <td class="px-4 py-2 p-2 m-2">
+      <button class="ajout_produits text-white rounded-lg bg-gray-400" data-id=${newCargo.number}>+Produits</button>
+      </td>
+      <td class="px-4 py-2">
+      <button class="text-white rounded-lg bg-amber-950" id=${newCargo.number}>${newCargo.etat}</button>
+      <button class="text-white rounded-lg bg-green-800" id=${newCargo.number}>${newCargo.progres}</button>
+
+      </td>
+    
     `;
             cargoTableBody.appendChild(newRow);
             cargoForm.reset();
@@ -188,3 +212,227 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+document.addEventListener('DOMContentLoaded', () => {
+    const productForm = document.getElementById('productForm');
+    const modal = document.getElementById('productFormModal');
+    const closeModalButton = document.getElementById('closeModalButton');
+    let currentCargoId = null;
+    const buttons = document.querySelectorAll('.ajout_produits');
+    buttons.forEach(button => {
+        button.addEventListener('click', (event) => {
+            const target = event.target;
+            const id = target.id;
+            changeEtat(id);
+            /* changeEtat(id); */
+            const dataId = target.getAttribute('data-id');
+            if (dataId !== null) {
+                currentCargoId = parseInt(dataId, 10);
+                console.log('ID du cargaison récupéré:', currentCargoId);
+                if (modal) {
+                    modal.classList.remove('hidden');
+                }
+            }
+        });
+    });
+    if (closeModalButton && modal) {
+        closeModalButton.addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                modal.classList.add('hidden');
+            }
+        });
+        modal.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.classList.add('hidden');
+            }
+        });
+    }
+    productForm.addEventListener('submit', (event) => __awaiter(void 0, void 0, void 0, function* () {
+        event.preventDefault();
+        const firstName = document.getElementById('firstName').value;
+        const lastName = document.getElementById('lastName').value;
+        const phoneNumber = document.getElementById('phoneNumber').value;
+        const address = document.getElementById('address').value;
+        const email = document.getElementById('email').value;
+        const productNumber = document.getElementById('productNumber').value;
+        const weight = document.getElementById('weight').value;
+        const productType = document.getElementById('productType').value;
+        const cargoType = document.getElementById('cargoType').value;
+        let isValid = true;
+        isValid = validateField(firstName, 'firstNameError') && isValid;
+        isValid = validateField(lastName, 'lastNameError') && isValid;
+        isValid = validateField(phoneNumber, 'phoneNumberError') && isValid;
+        isValid = validateField(address, 'addressError') && isValid;
+        isValid = validateOptionalField(email, 'emailError') && isValid;
+        isValid = validateField(productNumber, 'productNumberError') && isValid;
+        isValid = validateField(weight, 'weightError') && isValid;
+        isValid = validateField(productType, 'productTypeError') && isValid;
+        isValid = validateField(cargoType, 'cargoTypeError') && isValid;
+        if (isValid && currentCargoId !== null) {
+            const newProduct = {
+                firstName,
+                lastName,
+                phoneNumber,
+                address,
+                email,
+                productNumber: parseInt(productNumber, 10),
+                weight: parseFloat(weight),
+                productType,
+                cargoType,
+                code: generateRandomCode()
+            };
+            try {
+                // Fetch existing data from garde.json
+                const data = yield getDataFromJsonFile();
+                // Find the cargo by currentCargoId
+                const cargo = data.find((item) => item.number === currentCargoId);
+                console.log(cargo);
+                if (cargo) {
+                    // Push the new product into the produit array
+                    cargo.produit.push(newProduct);
+                    console.log(currentCargoId);
+                    // Save the updated data back to the garde.json file
+                    yield saveDataToJsonFile(newProduct, `?ajouter=${currentCargoId}`);
+                    console.log('Produit sauvegardé avec succès');
+                }
+                else {
+                    console.error('Cargaison non trouvée');
+                }
+            }
+            catch (error) {
+                console.error('Erreur lors de la sauvegarde du produit', error);
+            }
+            // Réinitialiser le formulaire
+            productForm.reset();
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+            console.log('Produit ajouté:', newProduct);
+        }
+    }));
+    function validateField(value, errorId) {
+        const errorElement = document.getElementById(errorId);
+        if (!value.trim()) {
+            errorElement.style.display = 'block';
+            return false;
+        }
+        else {
+            errorElement.style.display = 'none';
+            return true;
+        }
+    }
+    function validateOptionalField(value, errorId) {
+        const errorElement = document.getElementById(errorId);
+        if (value.trim() && !validateEmail(value)) {
+            errorElement.style.display = 'block';
+            return false;
+        }
+        else {
+            errorElement.style.display = 'none';
+            return true;
+        }
+    }
+    function validateEmail(email) {
+        // Expression régulière pour la validation de l'email
+        const re = /\S+@\S+\.\S+/;
+        return re.test(email);
+    }
+    function getDataFromJsonFile() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const response = yield fetch('garde.json');
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = yield response.json();
+            return data;
+        });
+    }
+    function saveDataToJsonFile(data_1) {
+        return __awaiter(this, arguments, void 0, function* (data, test = "") {
+            let url = 'savejson.php';
+            if (test) {
+                url += test;
+            }
+            try {
+                const response = yield fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.statusText}`);
+                }
+            }
+            catch (error) {
+                console.error('Erreur lors de la sauvegarde des données', error);
+            }
+        });
+    }
+});
+function getDataFromJsonFile2() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const response = yield fetch('garde.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = yield response.json();
+        return data;
+    });
+}
+function changeEtat(id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const cargaison = yield getDataFromJsonFile2();
+            const data = cargaison.find((item) => item.number === parseInt(id, 10));
+            /*   console.log(data); */
+            if (data) {
+                if (data.etat === "ouvert") {
+                    data.etat = "fermer";
+                    data.textContent = "fermer";
+                    /* updateCargaisons(data); */
+                    console.log(data.etat);
+                }
+                else {
+                    data.etat = "ouvert";
+                    data.textContent = "ouvert";
+                    /* updateCargaisons(data); */
+                    console.log(data.etat);
+                }
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    });
+}
+/* import fs from 'fs';
+
+async function updateCargaisons(cargaison: any): Promise<void> {
+  try {
+    const cargaisonsFilePath = 'garde.json'; // Mettez ici le chemin vers votre fichier JSON
+
+    // Lire le contenu du fichier JSON
+    const cargaisonsData = JSON.parse(fs.readFileSync(cargaisonsFilePath, 'utf-8'));
+
+    // Trouver l'index de l'élément à mettre à jour dans le tableau
+    const index = cargaisonsData.findIndex((item: any) => item.id === cargaison.id);
+
+    if (index === -1) {
+      throw new Error("Cargaison not found");
+    }
+
+    // Mettre à jour l'élément dans le tableau
+    cargaisonsData[index] = cargaison;
+
+    // Écrire le contenu mis à jour dans le fichier JSON
+    fs.writeFileSync(cargaisonsFilePath, JSON.stringify(cargaisonsData));
+
+    console.log("Cargaison mise à jour avec succès !");
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour de la cargaison :", error);
+  }
+} */ 

@@ -1,52 +1,113 @@
 [
     {
-        "number": 6485,
+        "number": 4602,
+        "type": "Terrestre",
+        "weight": "N\/A",
+        "dateDepart": "2024-06-07",
+        "dateArrivee": "2024-06-21",
+        "products": 23,
+        "distance": 1361.6633593392858,
+        "etat": "ouvert",
+        "progres": "En attente",
+        "produit": [
+            {
+                "firstName": "Colby",
+                "lastName": "Estrada",
+                "phoneNumber": "+1 (672) 645-8184",
+                "address": "Dolor reiciendis rat",
+                "email": "danakywe@mailinator.com",
+                "productNumber": 334,
+                "weight": 100,
+                "productType": "incassable",
+                "cargoType": "maritime",
+                "code": "JX44"
+            },
+            {
+                "firstName": "Vivian",
+                "lastName": "West",
+                "phoneNumber": "+1 (209) 779-8752",
+                "address": "Voluptatem omnis qui",
+                "email": "sawysu@mailinator.com",
+                "productNumber": 76,
+                "weight": 57,
+                "productType": "chimique",
+                "cargoType": "aerienne",
+                "code": "BY06"
+            }
+        ]
+    },
+    {
+        "number": 9086,
         "type": "Maritime",
-        "weight": 230,
-        "product": "N\/A",
-        "dateDepart": "2024-06-01",
-        "dateArrivee": "2024-06-09",
-        "distance": 92.31992940454357,
+        "weight": 345,
+        "dateDepart": "2024-06-14",
+        "dateArrivee": "2024-06-27",
+        "products": "N\/A",
+        "distance": 3873.5134499038345,
+        "etat": "ouvert",
+        "progres": "En attente",
         "produit": []
     },
     {
-        "number": 2943,
-        "type": "A\u00e9rienne",
-        "weight": 34,
-        "product": "N\/A",
-        "dateDepart": "2024-06-01",
-        "dateArrivee": "2024-06-09",
-        "distance": 27.69486753708013,
-        "produit": []
-    },
-    {
-        "number": 7287,
-        "type": "A\u00e9rienne",
+        "number": 8850,
+        "type": "Aerienne",
         "weight": "N\/A",
-        "product": 100,
-        "dateDepart": "2024-06-01",
-        "dateArrivee": "2024-06-09",
-        "distance": 11.260019103220246,
-        "produit": []
+        "dateDepart": "2024-06-14",
+        "dateArrivee": "2024-06-21",
+        "products": 545,
+        "distance": 1085.389451746303,
+        "etat": "ouvert",
+        "progres": "En attente",
+        "produit": [
+            {
+                "firstName": "Amela",
+                "lastName": "Villarreal",
+                "phoneNumber": "+1 (304) 629-8543",
+                "address": "Tenetur aliquam cons",
+                "email": "xupoj@mailinator.com",
+                "productNumber": 708,
+                "weight": 88,
+                "productType": "chimique",
+                "cargoType": "terrestre",
+                "code": "YN49"
+            },
+            {
+                "firstName": "Raphael",
+                "lastName": "Bridges",
+                "phoneNumber": "+1 (863) 915-8521",
+                "address": "Quidem ab reiciendis",
+                "email": "bahoqy@mailinator.com",
+                "productNumber": 753,
+                "weight": 27,
+                "productType": "materiel",
+                "cargoType": "maritime",
+                "code": "XY23"
+            }
+        ]
     },
     {
-        "number": 6708,
-        "type": "A\u00e9rienne",
+        "number": 2979,
+        "type": "Terrestre",
         "weight": "N\/A",
-        "product": 120,
-        "dateDepart": "2024-06-01",
-        "dateArrivee": "2024-06-09",
-        "distance": 40.47549270791961,
-        "produit": []
-    },
-    {
-        "number": 3901,
-        "type": "A\u00e9rienne",
-        "weight": 123,
-        "product": "N\/A",
-        "dateDepart": "2024-06-01",
-        "dateArrivee": "2024-06-09",
-        "distance": 12.117902667711846,
-        "produit": []
+        "dateDepart": "2024-06-13",
+        "dateArrivee": "2024-06-28",
+        "products": 45,
+        "distance": 1243.388912928061,
+        "etat": "ouvert",
+        "progres": "En attente",
+        "produit": [
+            {
+                "firstName": "Colin",
+                "lastName": "Kidd",
+                "phoneNumber": "+1 (468) 517-7248",
+                "address": "Labore ipsam occaeca",
+                "email": "rozez@mailinator.com",
+                "productNumber": 403,
+                "weight": 22,
+                "productType": "chimique",
+                "cargoType": "maritime",
+                "code": "DS03"
+            }
+        ]
     }
 ]

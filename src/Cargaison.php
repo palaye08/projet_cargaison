@@ -1,4 +1,23 @@
+<?php 
+  // Chemin du fichier JSON de sauvegarde
+  $jsonFile = 'garde.json';
 
+  // Vérifier si le fichier existe
+  if (file_exists($jsonFile)) {
+      // Lecture du fichier JSON
+      $jsonData = file_get_contents($jsonFile);
+      $cargaisons = json_decode($jsonData, true);
+  
+      // Vérifier si le décodage JSON a réussi
+      if ($cargaisons === null && json_last_error() !== JSON_ERROR_NONE) {
+          $error = "Erreur lors du décodage du JSON : " . json_last_error_msg();
+      }
+  } else {
+      // Réponse en cas de fichier non trouvé
+      $error = "Fichier non trouvé.";
+  }
+  
+ ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -20,8 +39,8 @@
   <div class="h-full w-80 bg-white">
     <h1 class="text-amber-950 flex items-center justify-center">DIOP TRANSIT</h1>
     <img class="rounded-full" src="download (1).jpeg" alt="">
-    <div class="text-white h-10 w-30 m-2 hover:scale-110 rounded-lg flex items-center justify-center bg-amber-950"><a href="">Cargaison</a></div>
-    <div class="text-white h-10 w-30 m-2 hover:scale-110 rounded-lg flex items-center justify-center bg-amber-950"><a href="">Produits</a></div>
+    <div class="text-white h-10 w-30 m-2 hover:scale-110 rounded-lg flex items-center justify-center bg-amber-950"><a href="Cargaison.php">Cargaison</a></div>
+    <div class="text-white h-10 w-30 m-2 hover:scale-110 rounded-lg flex items-center justify-center bg-amber-950"><a href="produit.php">Details</a></div>
 
   </div>
   <div class="w-full h-full flex-col p-4">
@@ -44,26 +63,111 @@
                 <th class="px-4 py-2">Poids</th>
                 <th class="px-4 py-2">Date de depart</th>
                 <th class="px-4 py-2">Date d'arrivée</th>
-                <th class="px-4 py-2">Nombre de Produits</th>
+                <th class="px-4 py-2">Produits</th>
                 <th class="px-4 py-2">Distance</th>
-                <th class="px-4 py-2">lieu depart</th>
-                <th class="px-4 py-2">Lieu d'arrivée</th>
-            
+                <th class="px-4 py-2">+Produits</th>
+                <th class="px-10 py-2">Action</th>
             </tr>
         </thead>
         <tbody id="cargo-table-body">
-         <?php 
-        if(isset($_POST)) {
-            var_dump($_POST);
-        }
-          ?>
-        </tbody>
+    <?php foreach ($cargaisons as $cargaison): ?>
+        <tr>
+            <td class="px-4 py-2"><?= htmlspecialchars($cargaison['number']) ?></td>
+            <td class="px-4 py-2"><?= htmlspecialchars($cargaison['type']) ?></td>
+            <td class="px-4 py-2"><?= htmlspecialchars($cargaison['weight']) ?></td>
+            <td class="px-4 py-2"><?= htmlspecialchars($cargaison['dateDepart']) ?></td> 
+            <td class="px-4 py-2"><?= htmlspecialchars($cargaison['dateArrivee']) ?></td>
+            <td class="px-4 py-2"><?= htmlspecialchars($cargaison['products']) ?></td>
+            <td class="px-4 py-2"><?= number_format($cargaison['distance'], 2)?> Km</td>
+            <td class="px-4 py-2 p-2 m-2">
+            <button class="ajout_produits text-white rounded-lg bg-gray-400" data-id=<?=$cargaison['number']?> >+Produits</button>
+            </td>
+            <td class="px-4 py-2">
+                <button class="ajout_produits text-white rounded-lg bg-amber-950" id=<?=$cargaison['number']?> ><?=$cargaison['etat']?></button>
+                <button class="ajout_produits text-white rounded-lg bg-green-800" id=<?=$cargaison['number']?> ><?=$cargaison['progres']?></button>
+            </td>
+        </tr>
+       
+    <?php   endforeach; ?>
+</tbody>
 
-    </table>
-      </div>
+<!-- Modal -->
+<div id="productFormModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 shadow-md">
+    <div class="bg-amber-950 text-white rounded-lg shadow-lg p-6 max-w-md w-full">
+        <h2 class="mb-4 text-xl font-bold">Ajouter un Produit</h2>
+        <form action="ajouter_produit.php" method="POST"  id="productForm">
+            <div class="mb-4 flex flex-wrap">
+                <div class="w-full md:w-1/2 md:pr-2">
+                    <label class="block text-white text-sm font-bold mb-2" for="firstName">Prénom</label>
+                    <input name="firstName" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="firstName" type="text" placeholder="Prénom">
+                    <div class="text-red-500 text-xs italic hidden" id="firstNameError">Veuillez entrer votre prénom.</div>
+                </div>
+                <div class="w-full md:w-1/2 md:pl-2">
+                    <label class="block text-white text-sm font-bold mb-2" for="lastName">Nom</label>
+                    <input name="lastName" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="lastName" type="text" placeholder="Nom">
+                    <div class="text-red-500 text-xs italic hidden" id="lastNameError">Veuillez entrer votre nom.</div>
+                </div>
+                <div class="w-40 m-2 mb-4">
+                    <label class="block text-white text-sm font-bold mb-2" for="phoneNumber">Téléphone</label>
+                    <input name="phoneNumber" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="phoneNumber" type="tel" placeholder="Téléphone">
+                    <div class="text-red-500 text-xs italic hidden" id="phoneNumberError">Veuillez entrer votre numéro de téléphone.</div>
+                </div>
+                <div class="w-40 m-2 mb-4">
+                    <label class="block text-white text-sm font-bold mb-2" for="address">Adresse</label>
+                    <input name="address" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="address" type="text" placeholder="Adresse">
+                    <div class="text-red-500 text-xs italic hidden" id="addressError">Veuillez entrer votre adresse.</div>
+                </div>
+                <div class="w-40 m-2 mb-4">
+                    <label class="block text-white text-sm font-bold mb-2" for="email">Email (facultatif)</label>
+                    <input name="email" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="Email">
+                    <div class="text-red-500 text-xs italic hidden" id="emailError">Veuillez entrer une adresse email valide.</div>
+                </div>
+                <div class="w-40 m-2 mb-4">
+                    <label class="block text-white text-sm font-bold mb-2" for="productNumber">Nombre de produits</label>
+                    <input name="productNumber" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="productNumber" type="number" placeholder="Nombre de produits">
+                    <div class="text-red-500 text-xs italic hidden" id="productNumberError">Veuillez entrer le nombre de produits.</div>
+                </div>
+                <div class="w-40 m-2 mb-4">
+                    <label class="block text-white text-sm font-bold mb-2" for="weight">Poids</label>
+                    <input name="weight" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="weight" type="number" placeholder="Poids">
+                    <div class="text-red-500 text-xs italic hidden" id="weightError">Veuillez entrer le poids.</div>
+                </div>
+                  <div class="w-40 m-2 mb-4">
+                       <label class="block text-white text-sm font-bold mb-2" for="productType">Type de produit</label>
+                        <select name="productType" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="productType">
+                            <option value="" disabled selected>Type de produit</option>
+                            <option value="incassable">Incassable</option>
+                            <option value="chimique">Chimique</option>
+                            <option value="materiel">Matériel</option>
+                       </select>
+                     <div class="text-red-500 text-xs italic hidden" id="productTypeError">Veuillez entrer le Type de produit.</div>
+                   </div>
+ 
+                    <div class="w-40 m-2 mb-4">
+                        <label class="block text-white text-sm font-bold mb-2" for="cargoType">Type de cargaison</label>
+                        <select name="cargoType" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="cargoType">
+                            <option value="" disabled selected>Type de cargaison</option>
+                            <option value="maritime">Maritime</option>
+                            <option value="terrestre">Terrestre</option>
+                            <option value="aerienne">Aérienne</option>
+                        </select>
+                        <div class="text-red-500 text-xs italic hidden" id="cargoTypeError">Veuillez entrer le type de cargaison.</div>
+                    </div>
+
+            </div>
+            <div class="flex items-center justify-between">
+                <button  class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit" id="submitButton">Ajouter</button>
+                <button type="button" class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" id="closeModalButton">Close</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+     </table>
+    </div>
       <div class="bg-amber-950 absolute p-4 m-2 ml-[80rem] rounded-lg">
         <h1 class="text-white text-2xl flex items-center justify-center mb-4">Ajouter une cargaison</h1>
-    <form id="cargaisonForm" class="space-y-4">
+    <form id="cargaisonForm" action="a" class="space-y-4">
         <select id="type_cargaison" class="block w-full h-10 rounded-lg p-2">
             <option value="" disabled selected>Type de cargaison</option>
             <option value="Maritime">Maritime</option>
@@ -134,7 +238,7 @@ searchInput.addEventListener('input', () => {
 });
 </script>
 <script>
-  const fs = require('fs');
+ /*  const fs = require('fs');
 
 // Définir le nom du fichier JSON
 const fileName = 'basedonnee.json';
@@ -176,7 +280,7 @@ cargaison.push(newCargo);
 
 // Sauvegarder les données mises à jour dans le fichier JSON
 saveDataToFile(cargaison);
-
+ */
 </script>
 </body>
 </html>
